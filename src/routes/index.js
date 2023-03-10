@@ -8,5 +8,35 @@ const router = Router();
 // Configurar los routers
 router.use("/poke", pokeRouter);
 router.use("/type", typeRouter);
-
+router.get("/", async (req, res) => {
+  res.send([
+    {
+      endpoint: "/poke",
+      description: "Returns all available pokemons in the API",
+      parameters: [
+        {
+          name: "pokemon",
+          endpoint: "/poke/:id",
+          description: "Returns information about a specific pokemon",
+        },
+        {
+          name: "name",
+          endpoint: "/poke?name=:name",
+          description: "Returns information about a specific pokemon",
+        },
+      ],
+    },
+    {
+      endpoing: "/type",
+      description: "Returns all available pokemon's types in the API",
+      parameters: [
+        {
+          name: "type",
+          endpoint: "/type/:id",
+          description: "Returns information about a specific type of pokemon",
+        },
+      ],
+    },
+  ]);
+});
 module.exports = router;
