@@ -8,6 +8,7 @@ const router = Router();
 // Configurar los routers
 router.use("/poke", pokeRouter);
 router.use("/type", typeRouter);
+router.get("/favicon.ico", (req, res) => res.status(204));
 router.get("/", async (req, res) => {
   res.send([
     {
@@ -27,7 +28,7 @@ router.get("/", async (req, res) => {
       ],
     },
     {
-      endpoing: "/type",
+      endpoint: "/type",
       description: "Returns all available pokemon's types in the API",
       parameters: [
         {
