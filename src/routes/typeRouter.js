@@ -14,8 +14,12 @@ typeRouter.get("/", async (req, res) => {
 });
 typeRouter.get("/:id", async (req, res) => {
   const { id } = req.params;
-  await getTypes();
-  let type = await Type.findByPk(id);
-  type ? res.status(200).send(type) : res.status(400).send({ error: "No type found" });
+  try {
+    await getTypes();
+    let type = await Type.findByPk(id);
+    type ? res.status(200).send(type) : res.status(404).send({ error: "No type found" });
+  } catch (error) {
+    res.status(404).send({ error: "No type found with id " + id });
+  }
 });
 module.exports = typeRouter;
