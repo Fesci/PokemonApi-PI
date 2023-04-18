@@ -7,6 +7,7 @@ pokeRouter.get("/", async (req, res) => {
   try {
     if (name) {
       const poke = await getPokeByName(name);
+      1;
       res.status(200).send(poke);
     }
     let allPokemons = await getAllPokemons();

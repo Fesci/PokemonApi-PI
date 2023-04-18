@@ -7,7 +7,7 @@ typeRouter.get("/", async (req, res) => {
   try {
     await getTypes();
     const types = await Type.findAll();
-    res.status(200).send(types);
+    types ? res.status(200).send(types) : res.status(404).send({ error: "" });
   } catch (error) {
     res.send(error.message);
   }

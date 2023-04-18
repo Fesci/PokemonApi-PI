@@ -4,21 +4,17 @@ const { Pokemon, Type } = require("../db");
 const baseUrl = `https://pokeapi.co/api/v2/pokemon?offset=0&limit=120`;
 const getApiPokemons = async () => {
   const response = await axios.get(baseUrl);
-  let pokemons = [];
-  response.data.results.forEach(element => {
-    pokemons.push(element);
-  });
+  const pokemons = response.data.results.map(({ name, url }) => ({ name, url }));
   return pokemons;
 };
 
 const getApiPokemonsInfo = async () => {
   const pokemons = await getApiPokemons();
-  let pokes = [];
-  const alt = await Promise.all(
-    pokemons.map(async element => {
-      const response = await axios.get(element.url);
-      const pokemon = {
-        id: response.data.id.toString(),
+  return Promise.all(
+    pokemons.map(async ({ url }) => {
+      const response = await axios.get(url);
+      return {
+        id: response.data.id,
         name: response.data.name,
         hp: response.data.stats[0].base_stat,
         attack: response.data.stats[1].base_stat,
@@ -27,15 +23,16 @@ const getApiPokemonsInfo = async () => {
         height: response.data.height,
         weight: response.data.weight,
         image: response.data.sprites.other.dream_world.front_default,
-        types: response.data.types.map(t => {
-          return { name: t.type.name };
-        }),
+        types: response.data.types.map(({ type }) => ({ name: type.name })),
       };
-      pokes.push(pokemon);
-      return pokemon;
     })
   );
-  return alt;
+};
+const orderById = array => {
+  for (let index = 0; index < array.length; index++) {
+    const element = array[index].id;
+    element.sort();
+  }
 };
 const getDbPokemons = async () => {
   try {
@@ -65,9 +62,11 @@ const getPokeByName = async name => {
 
   if (name) {
     poke = poke.filter(p => p.name.includes(name.toLowerCase()));
-    return poke;
-  } else {
-    return { error: "No pokemon found with that name" };
+    if (poke.length > 0) {
+      return poke;
+    } else {
+      return { error: "No pokemon found with that name" };
+    }
   }
 };
 const checkPostData = (req, res, next) => {
